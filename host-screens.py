@@ -8,8 +8,7 @@ def initZabbix():
     zapi = ZabbixAPI("http://zabbix-admin-hk.prod.spotoption.com/zabbix/")
     zapi.login("admin", "zabbix") 
 
-def createScreen(name, hostid, graphids):
-    print graphids
+def jsonScreenItems(graphids):
     screenitems = []
     for index, graphid in enumerate(graphids):
        screenitems.append({
@@ -21,10 +20,17 @@ def createScreen(name, hostid, graphids):
            "y": index,
            "dynamic": True
        })
-    print screenitems
+    return screenitems
 
-    response = zapi.screen.create(name=name, hsize=1, vsize=len(graphids),screenitems=screenitems)
-    screenid = response['screenids']
+def createScreen(name, hostid, graphids):
+    if(zapi.screen.exists(name = name)):
+        screenid = zapi.screen.get(output=['name','screenid'], filter={"name":name})[0]['screenid']
+        zapi.screen.update(screenid = screenid, size=1, vsize=len(graphids), screenitems=jsonScreenItems(graphids))
+        print "Screen updated"
+    else:
+       response = zapi.screen.create(name=name, hsize=1, vsize=len(graphids),screenitems=jsonScreenItems(graphids))
+       screenid = response['screenids']
+       print "Screen created"
    
 
 def parseHost(name, id):
