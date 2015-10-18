@@ -17,8 +17,7 @@ def jsonScreenItems(graphids):
            "width":"500",
            "height":"100",
            "x": 0,
-           "y": index,
-           "dynamic": True
+           "y": index
        })
     return screenitems
 
