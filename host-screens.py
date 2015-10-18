@@ -30,7 +30,27 @@ def createScreen(name, hostid, graphids):
        response = zapi.screen.create(name=name, hsize=1, vsize=len(graphids),screenitems=jsonScreenItems(graphids))
        screenid = response['screenids']
        print "Screen created"
-   
+
+def calcRank(graph):
+    graph['rank'] = 0
+    if(graph['name'] == "CPU load"):
+        graph['rank'] = 100
+    elif(match("^Network traffic.*", graph['name'])):
+        graph['rank'] = 90
+    elif(graph['name'] == "Memory usage"):
+        graph['rank'] = 100
+    elif(match("^Disk usage.*", graph['name'])):
+        graph['rank'] = 90
+    return graph
+
+
+def compareGraph(graph1, graph2):
+    if (calcRank(graph1)['rank'] < calcRank(graph2)['rank']):
+        return 1
+    elif(calcRank(graph1)['rank'] > calcRank(graph2)['rank']):
+        return -1
+    else:
+        return 0
 
 def parseHost(name, id):
     if(not match('.*-hk$',name)):
@@ -38,7 +58,9 @@ def parseHost(name, id):
     print name
 
     graphids = []
-    for graph in zapi.graph.get(output=['graphid','name'], hostids=id):
+    graphs = sorted(zapi.graph.get(output=['graphid','name'], hostids = id), cmp = compareGraph)
+    for graph in graphs:
+        print "  * %s" % (graph['name'])
         graphids.append(graph['graphid'])
     createScreen(name, id, graphids)    
 
