@@ -5,7 +5,7 @@ from pyzabbix import ZabbixAPI
 
 def initZabbix():
     global zapi
-    zapi = ZabbixAPI("http://zabbix-admin-hk.prod.spotoption.com/zabbix/")
+    zapi = ZabbixAPI("http://127.0.0.1/zabbix/")
     zapi.login("admin", "zabbix") 
 
 def jsonScreenItems(graphids):
