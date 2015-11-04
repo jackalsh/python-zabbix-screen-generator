@@ -14,8 +14,8 @@ def jsonScreenItems(graphids):
        screenitems.append({
            "resourcetype":"0",
            "resourceid":str(graphid),
-           "width":"500",
-           "height":"100",
+           "width":"1000",
+           "height":"200",
            "x": 0,
            "y": index
        })
@@ -36,11 +36,17 @@ def calcRank(graph):
     if(graph['name'] == "CPU load"):
         graph['rank'] = 100
     elif(match("^Network traffic.*", graph['name'])):
-        graph['rank'] = 90
+        graph['rank'] = 80
     elif(graph['name'] == "Memory usage"):
         graph['rank'] = 100
-    elif(match("^Disk usage.*", graph['name'])):
+    elif(graph['name'] == "Swap usage"):
+        graph['rank'] = 99
+    elif(match("^Disk space usage.*", graph['name'])):
         graph['rank'] = 90
+    elif(match("^Apache.*", graph['name'])):
+        graph['rank'] = 70
+    elif(match("^MySQL.*", graph['name'])):
+        graph['rank'] = 70
     return graph
 
 
